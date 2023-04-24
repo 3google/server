@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs https//pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int                @id @default(autoincrement())
+  nickname         String             @unique
+  platform         Platform
+  platform_id      String
+  profile_image    String?
+  is_admin         Boolean
+  created_at       DateTime
+  updated_at       DateTime?
+  deleted_at       DateTime?
+  Post             Post[]
+  Comment          Comment[]
+  BookmarkCategory BookmarkCategory[]
+}
+
+model Post {
+  id               Int                @id @default(autoincrement())
+  title            String
+  emotion          Int
+  content          String
+  author           User               @relation(fields: [author_id], references: [id])
+  author_id        Int
+  board_type       BoardType
+  created_at       DateTime
+  updated_at       DateTime?
+  deleted_at       DateTime?
+  Comment          Comment[]
+  Bookmark         Bookmark[]
+  RecommendContent RecommendContent[]
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  content    String
+  author     User      @relation(fields: [author_id], references: [id])
+  author_id  Int
+  post       Post      @relation(fields: [post_id], references: [id])
+  post_id    Int
+  created_at DateTime
+  updated_at DateTime?
+  deleted_at DateTime?
+}
+
+model Bookmark {
+  id          Int              @id @default(autoincrement())
+  post        Post             @relation(fields: [post_id], references: [id])
+  post_id     Int
+  category    BookmarkCategory @relation(fields: [category_id], references: [id])
+  category_id Int
+  created_at  DateTime
+  deleted_at  DateTime?
+}
+
+model BookmarkCategory {
+  id         Int        @id @default(autoincrement())
+  name       String?
+  user       User       @relation(fields: [user_id], references: [id])
+  user_id    Int
+  created_at DateTime
+  updated_at DateTime?
+  deleted_at DateTime?
+  Bookmark   Bookmark[]
+}
+
+model RecommendContent {
+  id       Int    @id @default(autoincrement())
+  post     Post   @relation(fields: [post_id], references: [id])
+  post_id  Int
+  movie    Movie? @relation(fields: [movie_id], references: [id])
+  movie_id Int?
+  music    Music? @relation(fields: [music_id], references: [id])
+  music_id Int?
+  book     Book?  @relation(fields: [book_id], references: [id])
+  book_id  Int?
+}
+
+model Movie {
+  id               Int                @id @default(autoincrement())
+  title            String
+  emotion          Int
+  RecommendContent RecommendContent[]
+}
+
+model Music {
+  id               Int                @id @default(autoincrement())
+  title            String
+  emotion          Int
+  RecommendContent RecommendContent[]
+}
+
+model Book {
+  id               Int                @id @default(autoincrement())
+  title            String
+  emotion          Int
+  RecommendContent RecommendContent[]
+}
+
+enum Platform {
+  KAKAO
+  NAVER
+}
+
+enum BoardType {
+  PUBLIC
+  PRIVATE
+  RECOMMEND
+}
