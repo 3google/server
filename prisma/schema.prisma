@@ -13,8 +13,7 @@ datasource db {
 model User {
   id               Int                @id @default(autoincrement())
   nickname         String             @unique
-  platform         Platform
-  platform_id      String
+  email            String             @unique
   profile_image    String?
   is_admin         Boolean
   created_at       DateTime
@@ -23,12 +22,26 @@ model User {
   Post             Post[]
   Comment          Comment[]
   BookmarkCategory BookmarkCategory[]
+  KakaoId          KakaoId[]
+  NaverId          NaverId[]
+}
+
+model KakaoId {
+  kakao_id String @id @unique
+  user     User   @relation(fields: [user_id], references: [id])
+  user_id  Int
+}
+
+model NaverId {
+  naver_id String @id @unique
+  user     User   @relation(fields: [user_id], references: [id])
+  user_id  Int
 }
 
 model Post {
   id               Int                @id @default(autoincrement())
   title            String
-  emotion          Int
+  emotion          Emotion
   content          String
   author           User               @relation(fields: [author_id], references: [id])
   author_id        Int
@@ -89,31 +102,35 @@ model RecommendContent {
 model Movie {
   id               Int                @id @default(autoincrement())
   title            String
-  emotion          Int
+  emotion          Emotion
   RecommendContent RecommendContent[]
 }
 
 model Music {
   id               Int                @id @default(autoincrement())
   title            String
-  emotion          Int
+  emotion          Emotion
   RecommendContent RecommendContent[]
 }
 
 model Book {
   id               Int                @id @default(autoincrement())
   title            String
-  emotion          Int
+  emotion          Emotion
   RecommendContent RecommendContent[]
-}
-
-enum Platform {
-  KAKAO
-  NAVER
 }
 
 enum BoardType {
   PUBLIC
   PRIVATE
   RECOMMEND
+}
+
+enum Emotion {
+  HAPPINESS
+  SADNESS
+  ANGER
+  FEAR
+  LOVE
+  SURPRISE
 }
