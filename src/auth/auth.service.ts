@@ -1,26 +1,66 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import axios from 'axios';
+import 'dotenv/config';
+import qs from 'qs';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  // const prisma = new PrismaClient()
+  // prisma.user.findUnique({
+  //   where: {
+  //     id:1
+  //   }
+  // }).then (user => {user.})
+  async kakaoLogin(code: string): Promise<any> {
+    const data = {
+      grant_type: 'authorization_code',
+      client_id: process.env.KAKAO_REST_API_KEY,
+      redirect_uri: process.env.REDIRECT_URI_LOGIN,
+      code,
+      client_secret: process.env.KAKAO_CLIENT_SECRET,
+    };
+    console.log(data);
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    };
+    // const {
+    //   data: { access_token }, //토큰!! 이걸로 유저 정보 가져올 수 있음
+    // }
+    const res = await axios.post('https://kauth.kakao.com/oauth/token', data, {
+      headers,
+    });
+    const accessToken = res.data.access_token;
+    console.log(accessToken);
+    const { data: userInfo } = await axios.get(
+      'https://kapi.kakao.com/v2/user/me',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        },
+      },
+    );
+    console.log(userInfo);
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  // create() {
+  //   return 'This action adds a new auth';
+  // }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  // findAll() {
+  //   return `This action returns all auth`;
+  // }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} auth`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+  // update(id: number) {
+  //   return `This action updates a #${id} auth`;
+  // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} auth`;
+  // }
 }
