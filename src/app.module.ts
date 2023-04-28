@@ -5,9 +5,12 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { AnalysisModule } from './analysis/analysis.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
+    BoardsModule,
+    UserModule,
     AuthModule,
     UsersModule,
     PostsModule,
