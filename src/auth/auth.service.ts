@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import 'dotenv/config';
-import qs from 'qs';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -42,6 +41,7 @@ export class AuthService {
       },
     );
     console.log(userInfo);
+    return userInfo;
   }
 
   // create() {

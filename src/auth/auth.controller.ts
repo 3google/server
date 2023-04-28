@@ -13,12 +13,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import qs from 'qs';
+import 'dotenv/config';
 
-const CLIENT_ID = 'ef308bd1e8ebba331efa21e2ed411795';
-const REDIRECT_URI = 'http://localhost:3009/auth/login/kakao/redirect';
+const clientId = process.env.KAKAO_REST_API_KEY;
+const redirectUri = `${process.env.ADDRESS}:${process.env.PORT}/auth/login/kakao/redirect`;
 
-export const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
 
 @Controller('auth')
 export class AuthController {
@@ -39,9 +39,9 @@ export class AuthController {
         throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
       }
       const kakao = await this.authService.kakaoLogin(code);
-      // console.log(`kakaoUser : ${qs.stringify(kakao)}`);
+      console.log(`kakaoUser : ${kakao}`);
       res.send({
-        user: kakao, // 유저 정보?
+        user: kakao, // 유저 정보
         Message: 'success',
       });
     } catch (e) {
