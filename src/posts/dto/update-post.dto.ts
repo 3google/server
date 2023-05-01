@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePostDto } from './create-post.dto';
-
-export class UpdatePostDto extends PartialType(CreatePostDto) {}
+import { Emotion } from '@prisma/client';
+import { IsString, IsEnum } from 'class-validator';
+export class UpdatePostDto {
+  @IsString()
+  title: string;
+  @IsString()
+  content: string;
+  @IsEnum(Emotion)
+  emotion: Emotion;
+}

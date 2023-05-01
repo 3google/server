@@ -3,28 +3,32 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
 import { Post } from '@prisma/client';
+import { CreateRecommendDto } from './dto/create-recommend.dto';
+import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 
 @Injectable()
 export class PostsService {
   constructor(private postRepository: PostsRepository) {}
 
-  create(createPostDto: CreatePostDto): Promise<Post> {
-    return this.postRepository.create(createPostDto);
+  async createPost(
+    createPostDto: CreatePostDto,
+    createRecommendDtos: CreateRecommendDto[],
+  ): Promise<Post> {
+    return await this.postRepository.createPost(
+      createPostDto,
+      createRecommendDtos,
+    );
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+    return await this.postRepository.updatePost(id, updatePostDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findPostsByUser(userId: number) {
+    return await this.postRepository.findPostsByUser(userId);
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
+    return await this.postRepository.findPostsByQuery(postsQueryDto);
   }
 }
