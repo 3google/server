@@ -18,7 +18,7 @@ export class PostsRepository {
     if (createRecommendDtos != undefined) {
       const datas = [];
       for (const recommend of createRecommendDtos) {
-        datas.push({ post_id: post.id, ...recommend });
+        datas.push({ postId: post.id, ...recommend });
       }
       await this.prisma.recommendContent.createMany({
         data: datas,
@@ -35,10 +35,21 @@ export class PostsRepository {
   }
 
   async findPostsByUser(userId: number) {
-    return await this.prisma.post.findMany({ where: { author_id: userId } });
+    return await this.prisma.post.findMany({ where: { authorId: userId } });
   }
 
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
     return await this.prisma.post.findMany({ where: postsQueryDto });
+  }
+
+  async deletePostById(id: number) {
+    await this.prisma.post.update({
+      where: { id: id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  async findPostById(id: number) {
+    return await this.prisma.post.findUnique({ where: { id: id } });
   }
 }

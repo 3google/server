@@ -31,4 +31,13 @@ export class PostsService {
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
     return await this.postRepository.findPostsByQuery(postsQueryDto);
   }
+
+  async deletePostById(id: number) {
+    //댓글이랑 추천 컨텐츠도 삭제해야 함
+    await this.postRepository.deletePostById(id);
+  }
+
+  async findPostById(id: number) {
+    return await this.postRepository.findPostById(id);
+  }
 }

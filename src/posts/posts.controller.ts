@@ -34,10 +34,10 @@ export class PostsController {
     return post;
   }
 
-  @Patch('/:post_id')
+  @Patch('/:postId')
   @UsePipes(ValidationPipe)
   async updatePost(
-    @Param('post_id') id: number,
+    @Param('postId') id: number,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<PostModel> {
     return await this.postsService.updatePost(Number(id), updatePostDto);
@@ -45,7 +45,7 @@ export class PostsController {
 
   @Get('/user')
   async findPostsByUser() {
-    const userId = 4; // 토큰에서 불러오기
+    const userId = 3; // 토큰에서 불러오기
     return await this.postsService.findPostsByUser(userId);
   }
 
@@ -53,5 +53,15 @@ export class PostsController {
   @UsePipes(ValidationPipe)
   async findPosts(@Query() postsQueryDto: FindPostsQueryDto) {
     return await this.postsService.findPostsByQuery(postsQueryDto);
+  }
+
+  @Get('/:postId')
+  async findPostById(@Param('postId') id: number) {
+    return await this.postsService.findPostById(id);
+  }
+
+  @Delete('/:postId')
+  async deletePostById(@Param('postId') id: number) {
+    return await this.postsService.deletePostById(Number(id));
   }
 }

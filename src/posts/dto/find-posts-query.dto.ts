@@ -3,7 +3,7 @@ import { IsEnum, IsOptional } from 'class-validator';
 export class FindPostsQueryDto {
   @IsOptional()
   @IsEnum(BoardType)
-  board_type?: BoardType;
+  boardType?: BoardType;
   @IsOptional()
   @IsEnum(Emotion)
   emotion?: Emotion;

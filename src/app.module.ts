@@ -9,8 +9,6 @@ import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
-    BoardsModule,
-    UserModule,
     AuthModule,
     UsersModule,
     PostsModule,
