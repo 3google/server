@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `platform` CHAR(5) NOT NULL DEFAULT 'KAKAO';

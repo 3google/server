@@ -19,6 +19,7 @@ model User {
   created_at       DateTime           @default(now())
   updated_at       DateTime?          @updatedAt
   deleted_at       DateTime?
+  platform         String             @default("KAKAO") @db.Char(5)
   Post             Post[]
   Comment          Comment[]
   BookmarkCategory BookmarkCategory[]
