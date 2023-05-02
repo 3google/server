@@ -12,114 +12,101 @@ datasource db {
 
 model User {
   id               Int                @id @default(autoincrement())
-  nickname         String             @unique
-  email            String             @unique
-  profile_image    String?
-  is_admin         Boolean
-  created_at       DateTime           @default(now())
-  updated_at       DateTime?          @updatedAt
-  deleted_at       DateTime?
-  platform         String             @default("KAKAO") @db.Char(5)
-  Post             Post[]
-  Comment          Comment[]
-  BookmarkCategory BookmarkCategory[]
-  KakaoId          KakaoId[]
-  NaverId          NaverId[]
-}
-
-model KakaoId {
-  kakao_id   String   @id @unique
-  user       User     @relation(fields: [user_id], references: [id])
-  user_id    Int
-  created_at DateTime @default(now())
-}
-
-model NaverId {
-  naver_id   String   @id @unique
-  user       User     @relation(fields: [user_id], references: [id])
-  user_id    Int
-  created_at DateTime @default(now())
+  nickname         String             @unique @db.VarChar(10)
+  email            String             @unique @db.VarChar(100)
+  profileImage     String?
+  platform         Platform
+  isAdmin          Boolean
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?          @default(now()) @updatedAt
+  deletedAt        DateTime?
+  post             Post[]
+  comment          Comment[]
+  bookmarkCategory BookmarkCategory[]
 }
 
 model Post {
   id               Int                @id @default(autoincrement())
-  title            String
+  title            String             @db.VarChar(20)
   emotion          Emotion
-  content          String
-  author           User               @relation(fields: [author_id], references: [id])
-  author_id        Int
-  board_type       BoardType
-  created_at       DateTime           @default(now())
-  updated_at       DateTime?          @updatedAt
-  deleted_at       DateTime?
-  Comment          Comment[]
-  Bookmark         Bookmark[]
-  RecommendContent RecommendContent[]
+  content          String             @db.VarChar(500)
+  author           User               @relation(fields: [authorId], references: [id])
+  authorId         Int
+  boardType        BoardType
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?          @default(now()) @updatedAt
+  deletedAt        DateTime?
+  comment          Comment[]
+  bookmark         Bookmark[]
+  recommendContent RecommendContent[]
 }
 
 model Comment {
-  id         Int       @id @default(autoincrement())
-  content    String
-  author     User      @relation(fields: [author_id], references: [id])
-  author_id  Int
-  post       Post      @relation(fields: [post_id], references: [id])
-  post_id    Int
-  created_at DateTime  @default(now())
-  updated_at DateTime? @updatedAt
-  deleted_at DateTime?
+  id        Int       @id @default(autoincrement())
+  content   String    @db.VarChar(100)
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
+  deletedAt DateTime?
 }
 
 model Bookmark {
-  id          Int              @id @default(autoincrement())
-  post        Post             @relation(fields: [post_id], references: [id])
-  post_id     Int
-  category    BookmarkCategory @relation(fields: [category_id], references: [id])
-  category_id Int
-  created_at  DateTime         @default(now())
+  id         Int              @id @default(autoincrement())
+  post       Post             @relation(fields: [postId], references: [id])
+  postId     Int
+  category   BookmarkCategory @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime         @default(now())
+  deletedAt  DateTime?
 }
 
 model BookmarkCategory {
-  id         Int        @id @default(autoincrement())
-  name       String?
-  user       User       @relation(fields: [user_id], references: [id])
-  user_id    Int
-  created_at DateTime   @default(now())
-  updated_at DateTime?  @updatedAt
-  Bookmark   Bookmark[]
+  id        Int        @id @default(autoincrement())
+  name      String?    @db.VarChar(20)
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @default(now()) @updatedAt
+  deletedAt DateTime?
+  bookmark  Bookmark[]
 }
 
 model RecommendContent {
-  id         Int      @id @default(autoincrement())
-  post       Post     @relation(fields: [post_id], references: [id])
-  post_id    Int
-  movie      Movie?   @relation(fields: [movie_id], references: [id])
-  movie_id   Int?
-  music      Music?   @relation(fields: [music_id], references: [id])
-  music_id   Int?
-  book       Book?    @relation(fields: [book_id], references: [id])
-  book_id    Int?
-  created_at DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  movie     Movie?    @relation(fields: [movieId], references: [id])
+  movieId   Int?
+  music     Music?    @relation(fields: [musicId], references: [id])
+  musicId   Int?
+  book      Book?     @relation(fields: [bookId], references: [id])
+  bookId    Int?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 }
 
 model Movie {
   id               Int                @id @default(autoincrement())
-  title            String
+  title            String             @db.VarChar(50)
   emotion          Emotion
-  RecommendContent RecommendContent[]
+  recommendContent RecommendContent[]
 }
 
 model Music {
   id               Int                @id @default(autoincrement())
-  title            String
+  title            String             @db.VarChar(50)
   emotion          Emotion
-  RecommendContent RecommendContent[]
+  recommendContent RecommendContent[]
 }
 
 model Book {
   id               Int                @id @default(autoincrement())
-  title            String
+  title            String             @db.VarChar(50)
   emotion          Emotion
-  RecommendContent RecommendContent[]
+  recommendContent RecommendContent[]
 }
 
 enum BoardType {
@@ -135,4 +122,9 @@ enum Emotion {
   FEAR
   LOVE
   SURPRISE
+}
+
+enum Platform {
+  KAKAO
+  NAVER
 }
