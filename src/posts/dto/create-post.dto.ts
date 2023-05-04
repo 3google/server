@@ -1,5 +1,4 @@
 import { Emotion, BoardType } from '@prisma/client';
-import { Type } from 'class-transformer';
 import { IsInt, IsString, IsEnum } from 'class-validator';
 export class CreatePostDto {
   @IsInt()

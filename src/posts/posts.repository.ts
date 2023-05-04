@@ -10,22 +10,22 @@ import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 export class PostsRepository {
   constructor(private prisma: PrismaService) {}
 
-  // async createPost(
-  //   createPostDto: CreatePostDto,
-  //   createRecommendDtos: CreateRecommendDto[],
-  // ): Promise<Post> {
-  //   const post: Post = await this.prisma.post.create({ data: createPostDto });
-  //   if (createRecommendDtos != undefined) {
-  //     const datas = [];
-  //     for (const recommend of createRecommendDtos) {
-  //       datas.push({ postId: post.id, ...recommend });
-  //     }
-  //     await this.prisma.recommendContent.createMany({
-  //       data: datas,
-  //     });
-  //   }
-  //   return post;
-  // }
+  async createPost(
+    createPostDto: CreatePostDto,
+    createRecommendDtos: CreateRecommendDto[],
+  ): Promise<Post> {
+    const post: Post = await this.prisma.post.create({ data: createPostDto });
+    if (createRecommendDtos != undefined) {
+      const datas = [];
+      for (const recommend of createRecommendDtos) {
+        datas.push({ postId: post.id, ...recommend });
+      }
+      await this.prisma.recommendContent.createMany({
+        data: datas,
+      });
+    }
+    return post;
+  }
 
   async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     return await this.prisma.post.update({

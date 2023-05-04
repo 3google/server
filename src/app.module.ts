@@ -6,6 +6,8 @@ import { CommentsModule } from './comments/comments.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './response/response.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 // Config에 추가한 환경 변수가 valid한지 확인해주는 모듈(joi)
@@ -55,7 +57,8 @@ import { ConfigService } from '@nestjs/config';
     CommentsModule,
     BookmarksModule,
     AnalysisModule,
+    PrismaModule,
   ],
-  providers: [ConfigService],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
 })
 export class AppModule {}

@@ -23,23 +23,24 @@ export class PostsController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  // async createPost(
-  //   @Body('post')
-  //   postDto: CreatePostDto,
-  //   @Body('recommendContents')
-  //   recommendDtos: CreateRecommendDto[],
-  // ): Promise<PostModel> {
-  //   console.log(postDto);
-  //   const post = await this.postsService.createPost(postDto, recommendDtos);
-  //   return post;
-  // }
+  async createPost(
+    @Body('post')
+    postDto: CreatePostDto,
+    @Body('recommendContents')
+    recommendDtos: CreateRecommendDto[],
+  ): Promise<{ data: PostModel; message: string }> {
+    const post = await this.postsService.createPost(postDto, recommendDtos);
+    return { data: post, message: '게시글이 정상적으로 저장되었습니다.' };
+  }
+
   @Patch('/:postId')
   @UsePipes(ValidationPipe)
   async updatePost(
     @Param('postId') id: number,
     @Body() updatePostDto: UpdatePostDto,
-  ): Promise<PostModel> {
-    return await this.postsService.updatePost(Number(id), updatePostDto);
+  ): Promise<{ data: PostModel; message: string }> {
+    const post = await this.postsService.updatePost(Number(id), updatePostDto);
+    return { data: post, message: '게시글이 정상적으로 수정되었습니다.' };
   }
 
   @Get('/user')

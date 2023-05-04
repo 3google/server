@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
-import { ValidationPipe } from '@nestjs/common';
+import { setNestApp } from './setNestApp';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  setNestApp(app);
   const port: number = Number(process.env.PORT) || 3009;
 
   await app.listen(port, (): void => {

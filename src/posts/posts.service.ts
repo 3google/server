@@ -10,15 +10,15 @@ import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 export class PostsService {
   constructor(private postRepository: PostsRepository) {}
 
-  // async createPost(
-  //   createPostDto: CreatePostDto,
-  //   createRecommendDtos: CreateRecommendDto[],
-  // ): Promise<Post> {
-  //   return await this.postRepository.createPost(
-  //     createPostDto,
-  //     createRecommendDtos,
-  //   );
-  // }
+  async createPost(
+    createPostDto: CreatePostDto,
+    createRecommendDtos: CreateRecommendDto[],
+  ): Promise<Post> {
+    return await this.postRepository.createPost(
+      createPostDto,
+      createRecommendDtos,
+    );
+  }
 
   async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     return await this.postRepository.updatePost(id, updatePostDto);
