@@ -25,6 +25,8 @@ import { ConfigService } from '@nestjs/config';
         KAKAO_REDIRECT_LOGIN_URI: Joi.string().required(),
         KAKAO_CLIENT_SECRET: Joi.string().required(),
         KAKAO_REDIRECT_SIGNUP_URI: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        COOKIE_SECRET: Joi.string().required(),
       }),
       load: [
         // 프로그램 실행 이후, .env에 있는 값들을 process.env에 넣어줌
@@ -41,6 +43,8 @@ import { ConfigService } from '@nestjs/config';
             kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET,
             kakaoLoginUrl: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_REST_API_KEY}&redirect_uri=${process.env.KAKAO_REDIRECT_LOGIN_URI}&response_type=code`,
             kakaoSignupUrl: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_REST_API_KEY}&redirect_uri=${process.env.KAKAO_REDIRECT_SIGNUP_URI}&response_type=code`,
+            jwtSecret: process.env.JWT_SECRET,
+            cookieSecret: process.env.COOKIE_SECRET,
           };
         },
       ],

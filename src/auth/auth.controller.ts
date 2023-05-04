@@ -43,23 +43,20 @@ export class AuthController {
     // 클라이언트는 해당 응답을 받고 300번대 상태코드임을 확인하고 Location에 적힌 주소로 요청을 다시 보냄
   }
 
-  //TODO: 로그인 함수에서 디비랑 이메일 비교해서 이메일 존재x시 회원가입하게 만드는 로직 추가 필요 & 로그인+회원가입 경로 두개니까 각각 버튼만들기
-
   // Location: http://localhost:3009/auth/login/kakao/redirect?code=asdadasdasdasdasdas
   @Get('/login/kakao/redirect') // 3. 유저가 카카오로그인 완료시 이 경로로 와서 우리 서버 로그인을 함
   async kakaoLoginRedirect(
     @Query('code') code: string, // 카카오 로그인 성공시 건네준 인가코드를 쿼리 파라미터로 받아옴
     @Res({ passthrough: true }) res,
   ) {
-    console.log(code);
+    console.log(`code: ${code}`);
     try {
       if (code === null || code === undefined) {
         throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
       }
-      const kakao = await this.authService.fetchKakaoUser(code, false);
-      console.log(kakao);
+      const accessToken = await this.authService.login(code);
+      res.cookie('accessToken', accessToken);
       res.json({
-        user: kakao, // 유저 정보
         Message: 'success',
       });
     } catch (e) {
@@ -67,29 +64,29 @@ export class AuthController {
       throw new UnauthorizedException();
     }
   }
-  @Get('/signup/kakao')
-  kakaoSignup(@Res({ passthrough: true }) res: Response) {
-    res.redirect(this.kakaoSignupUrl);
-  }
+  // @Get('/signup/kakao')
+  // kakaoSignup(@Res({ passthrough: true }) res: Response) {
+  //   res.redirect(this.kakaoSignupUrl);
+  // }
 
-  @Get('/signup/kakao/redirect') // 3. 유저가 카카오로그인 완료시 이 경로로 와서 우리 서버 로그인을 함
-  async kakaoSignupRedirect(
-    @Query('code') code: string, // 카카오 로그인 성공시 건네준 인가코드를 쿼리 파라미터로 받아옴
-    @Res({ passthrough: true }) res,
-  ) {
-    console.log(code);
-    try {
-      if (code === null || code === undefined) {
-        throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
-      }
+  // @Get('/signup/kakao/redirect') // 3. 유저가 카카오로그인 완료시 이 경로로 와서 우리 서버 로그인을 함
+  // async kakaoSignupRedirect(
+  //   @Query('code') code: string, // 카카오 로그인 성공시 건네준 인가코드를 쿼리 파라미터로 받아옴
+  //   @Res({ passthrough: true }) res,
+  // ) {
+  //   console.log(code);
+  //   try {
+  //     if (code === null || code === undefined) {
+  //       throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
+  //     }
 
-      const userId = await this.authService.signupWithKakao(code);
-      const accessToken = this.authService.createAccessToken(userId);
-    } catch (e) {
-      console.log(e.message);
-      throw new UnauthorizedException();
-    }
-  }
+  //     const userId = await this.authService.signupWithKakao(code);
+  //     const accessToken = this.authService.createAccessToken(userId);
+  //   } catch (e) {
+  //     console.log(e.message);
+  //     throw new UnauthorizedException();
+  //   }
+  // }
 
   // @Get()
   // findAll() {

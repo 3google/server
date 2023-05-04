@@ -23,17 +23,16 @@ export class PostsController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createPost(
-    @Body('post')
-    postDto: CreatePostDto,
-    @Body('recommendContents')
-    recommendDtos: CreateRecommendDto[],
-  ): Promise<PostModel> {
-    console.log(postDto);
-    const post = await this.postsService.createPost(postDto, recommendDtos);
-    return post;
-  }
-
+  // async createPost(
+  //   @Body('post')
+  //   postDto: CreatePostDto,
+  //   @Body('recommendContents')
+  //   recommendDtos: CreateRecommendDto[],
+  // ): Promise<PostModel> {
+  //   console.log(postDto);
+  //   const post = await this.postsService.createPost(postDto, recommendDtos);
+  //   return post;
+  // }
   @Patch('/:postId')
   @UsePipes(ValidationPipe)
   async updatePost(

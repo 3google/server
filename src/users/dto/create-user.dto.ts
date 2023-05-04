@@ -13,11 +13,16 @@ export class CreateUserDto {
 
   platform: Platform;
 
-  constructor(email: string, nickname: string, platform: Platform) {
+  constructor(
+    email: string,
+    nickname: string,
+    profileImage: string | null,
+    platform: Platform,
+  ) {
     this.email = email;
     this.nickname = nickname;
+    this.profileImage = profileImage;
     this.platform = platform;
     this.isAdmin = false;
-    this.profileImage = null;
   }
 }

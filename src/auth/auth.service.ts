@@ -1,19 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersRepository } from 'src/users/users.repository';
 import { KakaoUserDto } from './dto/kakao-user.dto';
 import { Platform } from 'src/users/dto/platform.enum';
 import jwt from 'jsonwebtoken';
-
-// const prisma = new PrismaClient()
-// prisma.user.findUnique({
-//   where: {
-//     id:1
-//   }
-// }).then (user => {user.profile_image})
 
 // signup의 인자로 code를 받고 내부에서 this.authService.fetchKakaoUser(code);
 // 그러면 kakao의 user 정보가 리턴됨
@@ -40,6 +32,7 @@ export class AuthService {
     this.clientSecret = configService.get('kakaoClientSecret');
     this.jwtSecret = configService.get('jwtSecret');
   }
+  //유저 정보 받아오기
   async fetchKakaoUser(code: string, isSignupRedirectUri: boolean) {
     const redirectUri = isSignupRedirectUri
       ? this.kakaoRedirectSignupUri
@@ -71,27 +64,62 @@ export class AuthService {
         },
       },
     );
-
+    console.log(userInfo);
     return userInfo;
   }
 
-  async signupWithKakao(code: string) {
+  // async signupWithKakao(code: string) {
+  //   const {
+  //     kakao_account: {
+  //       email,
+  //       profile: { nickname },
+  //     },
+  //   } = await this.fetchKakaoUser(code, true);
+  //   const createUserDto = new CreateUserDto(email, nickname, Platform.KAKAO);
+  //   const newUser = await this.usersRepository.create(createUserDto);
+  //   return newUser.id;
+  // }
+
+  //로그인(디비에 정보없을 시 회원가입)
+  async login(code: string) {
     const {
       kakao_account: {
         email,
-        profile: { nickname },
+        profile: { nickname, profile_image_url },
       },
-    } = await this.fetchKakaoUser(code, true);
-    const createUserDto = new CreateUserDto(email, nickname, Platform.KAKAO);
-    const newUser = await this.usersRepository.create(createUserDto);
-    return newUser.id;
+    } = await this.fetchKakaoUser(code, false);
+    const foundUser = await this.usersRepository.findByEmail(email);
+    if (!foundUser) {
+      const createUserDto = new CreateUserDto(
+        email,
+        nickname,
+        profile_image_url,
+        Platform.KAKAO,
+      );
+      const newUser = await this.usersRepository.create(createUserDto);
+      const accessToken = this.createAccessToken(newUser.id, newUser.isAdmin);
+      return accessToken;
+    }
+    if (foundUser.platform == 'NAVER') {
+      throw new BadRequestException(
+        `${foundUser.platform}로 회원가입한 유저입니다.`,
+      );
+      //TODO: refresh토큰 및 accesstoken 만료 기간 등 설정
+      //!res.redirect(로그인하는 페이지?)
+    }
+    const accessToken = this.createAccessToken(foundUser.id, foundUser.isAdmin);
+    return accessToken;
+    //!토큰 없을 때 로그인페이지 리다이렉트?
   }
 
-  async login() {}
-  //TODO: jwt token 만들기
-  createAccessToken(userId: number) {
-    const payload = { userId: userId };
-    jwt.sign(payload, this.jwtSecret);
+  createAccessToken(userId: number, isAdmin: boolean) {
+    const payload = { userId, isAdmin };
+    const accessToken = jwt.sign(payload, this.jwtSecret);
+    return accessToken;
+  }
+  verifyAccessToken(accessToken: string) {
+    const payload = jwt.verify(accessToken, this.jwtSecret);
+    return payload;
   }
   // create() {
   //   return 'This action adds a new auth';

@@ -19,11 +19,21 @@ export class UsersRepository {
       data: {
         email,
         platform,
-        is_admin: isAdmin,
+        isAdmin,
         nickname,
-        profile_image: profileImage,
+        profileImage,
       },
     });
     return newUser; //return  리턴 뭐 줄건지 말건지 생각해보기
+  }
+
+  //find user throuth email
+  async findByEmail(email: string) {
+    const userByEmail = await this.prismaService.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return userByEmail;
   }
 }
