@@ -1,26 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { FindBookmarkDto } from './dto/find-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { BookmarksRepository } from './bookmarks.repository';
+import { Bookmark } from '@prisma/client';
 
 @Injectable()
 export class BookmarksService {
-  create(createBookmarkDto: CreateBookmarkDto) {
-    return 'This action adds a new bookmark';
+  constructor(private bookmarksRepository: BookmarksRepository){}
+
+  async create(createBookmarkDto: CreateBookmarkDto):Promise<Bookmark> {
+    return await this.bookmarksRepository.create(createBookmarkDto);
   }
 
-  findAll() {
-    return `This action returns all bookmarks`;
+  async find(findBookmarkDto:FindBookmarkDto) {
+    return await this.bookmarksRepository.find(findBookmarkDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bookmark`;
-  }
-
-  update(id: number, updateBookmarkDto: UpdateBookmarkDto) {
-    return `This action updates a #${id} bookmark`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} bookmark`;
+  async deleteBookmark(Id:number){
+    return await this.bookmarksRepository.deleteBookmark(Id);
   }
 }

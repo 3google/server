@@ -1,34 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { FindBookmarkDto } from './dto/find-bookmark.dto';
+import { Bookmark as BookmarkModel } from '@prisma/client';
 
 @Controller('bookmarks')
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
-  @Post()
-  create(@Body() createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarksService.create(createBookmarkDto);
+  //북마크 추가 
+  @Post('/')
+  @UsePipes(ValidationPipe)
+  async create(@Body() createBookmarkDto: CreateBookmarkDto):Promise<BookmarkModel> {
+    const bookmark = await this.bookmarksService.create(createBookmarkDto);
+    return bookmark;
   }
 
-  @Get()
-  findAll() {
-    return this.bookmarksService.findAll();
+  //북마크 카테고리별 목록 조회 시 //수정예정. 
+  @Get('/category/:category_id')
+  @UsePipes(ValidationPipe)
+  find(@Query() findBookmarkDto:FindBookmarkDto ) {
+    return this.bookmarksService.find(findBookmarkDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookmarksService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookmarkDto: UpdateBookmarkDto) {
-    return this.bookmarksService.update(+id, updateBookmarkDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookmarksService.remove(+id);
+  //북마크 해제
+  @Delete('/:bookmark_id')
+  @UsePipes(ValidationPipe)
+  async DeleteBookmark(@Param('bookmark_id')Id :number){
+    return await this.bookmarksService.deleteBookmark(Number(Id));
   }
 }

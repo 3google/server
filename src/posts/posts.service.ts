@@ -1,26 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostsRepository } from './posts.repository';
+import { Post } from '@prisma/client';
+import { CreateRecommendDto } from './dto/create-recommend.dto';
+import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(private postRepository: PostsRepository) {}
+
+  async createPost(
+    createPostDto: CreatePostDto,
+    createRecommendDtos: CreateRecommendDto[],
+  ): Promise<Post> {
+    return await this.postRepository.createPost(
+      createPostDto,
+      createRecommendDtos,
+    );
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+    return await this.postRepository.updatePost(id, updatePostDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findPostsByUser(userId: number) {
+    return await this.postRepository.findPostsByUser(userId);
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
+    return await this.postRepository.findPostsByQuery(postsQueryDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async deletePostById(id: number) {
+    //댓글이랑 추천 컨텐츠도 삭제해야 함
+    await this.postRepository.deletePostById(id);
+  }
+
+  async findPostById(id: number) {
+    return await this.postRepository.findPostById(id);
   }
 }
