@@ -10,3 +10,5 @@ export class CreateRecommendDto {
   @IsOptional()
   bookId?: number;
 }
+
+// 요청 데이터 형태를 변경
