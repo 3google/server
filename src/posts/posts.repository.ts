@@ -35,7 +35,7 @@ export class PostsRepository {
   }
 
   async findPostsByUser(userId: number) {
-    return await this.prisma.post.findMany({ where: { authorId: userId } });
+    // return await this.prisma.post.findMany({ where: { authorId: userId } });
   }
 
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
@@ -43,10 +43,10 @@ export class PostsRepository {
   }
 
   async deletePostById(id: number) {
-    await this.prisma.post.update({
-      where: { id: id },
-      data: { deletedAt: new Date() },
-    });
+    // await this.prisma.post.update({
+    //   where: { id: id },
+    //   data: { deletedAt: new Date() },
+    // });
   }
 
   async findPostById(id: number) {
