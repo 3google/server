@@ -15,7 +15,7 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((datas) => {
         const statusCode = res.statusCode;
-        const data = datas.data;
+        const data = datas.data; // TypeError: Cannot read properties of undefined (reading 'data')
         const message = datas.message || 'Request processed successfully';
         return {
           statusCode,

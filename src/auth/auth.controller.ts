@@ -15,13 +15,17 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Res } from '@nestjs/common';
 import { Response } from 'express';
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  REFRESH_TOKEN_COOKIE_KEY,
+} from 'src/utils/constants';
 
 @Controller('auth')
 export class AuthController {
   private kakaoRedirectLoginUri: string;
   private kakaoRedirectSignupUri: string;
   private kakaoLoginUrl: string;
-  private kakaoSignupUrl: string;
+  // private kakaoSignupUrl: string;
   private cookieSecret: string;
 
   constructor(
@@ -31,7 +35,7 @@ export class AuthController {
     this.kakaoRedirectLoginUri = configService.get('kakaoRedirectLoginUri');
     this.kakaoRedirectSignupUri = configService.get('kakaoRedirectSignupUri');
     this.kakaoLoginUrl = configService.get('kakaoLoginUrl');
-    this.kakaoSignupUrl = configService.get('kakaoSignupUrl');
+    // this.kakaoSignupUrl = configService.get('kakaoSignupUrl');
     this.cookieSecret = configService.get('cookieSecret');
   }
 
@@ -54,8 +58,23 @@ export class AuthController {
       if (code === null || code === undefined) {
         throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
       }
-      const accessToken = await this.authService.login(code);
-      res.cookie('accessToken', accessToken);
+      const token = await this.authService.login(code);
+      res.cookie(ACCESS_TOKEN_COOKIE_KEY, token.accessToken, {
+        // accessToken 쿠키에 값 token.accessToken을 저장하고, 현재시간으로부터 2시간동안 유효
+        path: '/',
+        // expires: new Date(Date.now() + 7200000),
+        maxAge: 7200000,
+        signed: true,
+        httpOnly: true,
+      });
+      res.cookie(REFRESH_TOKEN_COOKIE_KEY, token.refreshToken, {
+        // 현재시간으로부터 250시간 유효
+        path: '/',
+        // expires: new Date(Date.now() + 900000000),
+        maxAge: 900000000,
+        signed: true,
+        httpOnly: true,
+      });
       res.json({
         Message: 'success',
       });
@@ -64,6 +83,22 @@ export class AuthController {
       throw new UnauthorizedException();
     }
   }
+  //TODO 로그아웃 포스트
+  //로그아웃
+  @Post('/logout')
+  logout(@Res({ passthrough: true }) res) {
+    res.clearCookie('accessToken', {
+      path: '/',
+      signed: true,
+      httpOnly: true,
+    }),
+      res.clearCookie('refreshToken', {
+        path: '/',
+        signed: true,
+        httpOnly: true,
+      });
+  }
+
   // @Get('/signup/kakao')
   // kakaoSignup(@Res({ passthrough: true }) res: Response) {
   //   res.redirect(this.kakaoSignupUrl);
@@ -86,25 +121,5 @@ export class AuthController {
   //     console.log(e.message);
   //     throw new UnauthorizedException();
   //   }
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  //   return this.authService.update(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.authService.remove(+id);
   // }
 }

@@ -5,7 +5,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersRepository } from 'src/users/users.repository';
 import { KakaoUserDto } from './dto/kakao-user.dto';
 import { Platform } from 'src/users/dto/platform.enum';
-import jwt from 'jsonwebtoken';
+import { Token } from 'src/utils/token';
 
 // signup의 인자로 code를 받고 내부에서 this.authService.fetchKakaoUser(code);
 // 그러면 kakao의 user 정보가 리턴됨
@@ -20,17 +20,16 @@ export class AuthService {
   private kakaoRedirectLoginUri: string; //카카오 페이지에서 로그인 후 회원 정보 있을 때 이동될 우리 서버 주소
   private kakaoRedirectSignupUri: string; //카카오 페이지에서 로그인 후 회원 정보 없을 때 이동될 우리 서버 주소
   private clientSecret: string;
-  private jwtSecret: string;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly usersRepository: UsersRepository,
+    private readonly token: Token,
   ) {
     this.clientId = configService.get('kakaoRestApiKey');
     this.kakaoRedirectLoginUri = configService.get('kakaoRedirectLoginUri');
     this.kakaoRedirectSignupUri = configService.get('kakaoRedirectSignupUri');
     this.clientSecret = configService.get('kakaoClientSecret');
-    this.jwtSecret = configService.get('jwtSecret');
   }
   //유저 정보 받아오기
   async fetchKakaoUser(code: string, isSignupRedirectUri: boolean) {
@@ -97,47 +96,29 @@ export class AuthService {
         Platform.KAKAO,
       );
       const newUser = await this.usersRepository.create(createUserDto);
-      const accessToken = this.createAccessToken(newUser.id, newUser.isAdmin);
-      return accessToken;
+      const accessToken = this.token.createAccessToken(
+        newUser.id,
+        newUser.isAdmin,
+      );
+      const refreshToken = this.token.createRefreshToken(
+        newUser.id,
+        newUser.isAdmin,
+      );
+      return { accessToken, refreshToken };
     }
     if (foundUser.platform == 'NAVER') {
       throw new BadRequestException(
         `${foundUser.platform}로 회원가입한 유저입니다.`,
       );
-      //TODO: refresh토큰 및 accesstoken 만료 기간 등 설정
-      //!res.redirect(로그인하는 페이지?)
     }
-    const accessToken = this.createAccessToken(foundUser.id, foundUser.isAdmin);
-    return accessToken;
-    //!토큰 없을 때 로그인페이지 리다이렉트?
+    const accessToken = this.token.createAccessToken(
+      foundUser.id,
+      foundUser.isAdmin,
+    );
+    const refreshToken = this.token.createRefreshToken(
+      foundUser.id,
+      foundUser.isAdmin,
+    );
+    return { accessToken, refreshToken };
   }
-
-  createAccessToken(userId: number, isAdmin: boolean) {
-    const payload = { userId, isAdmin };
-    const accessToken = jwt.sign(payload, this.jwtSecret);
-    return accessToken;
-  }
-  verifyAccessToken(accessToken: string) {
-    const payload = jwt.verify(accessToken, this.jwtSecret);
-    return payload;
-  }
-  // create() {
-  //   return 'This action adds a new auth';
-  // }
-
-  // findAll() {
-  //   return `This action returns all auth`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} auth`;
-  // }
-
-  // update(id: number) {
-  //   return `This action updates a #${id} auth`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} auth`;
-  // }
 }

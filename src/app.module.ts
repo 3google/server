@@ -12,6 +12,8 @@ import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 // Config에 추가한 환경 변수가 valid한지 확인해주는 모듈(joi)
 import { ConfigService } from '@nestjs/config';
+import { AdminGuard, AuthGuard } from './auth/auth.guard';
+import { ADMIN_GUARD, AUTH_GUARD } from '@nestjs/core/constants';
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { ConfigService } from '@nestjs/config';
         KAKAO_REST_API_KEY: Joi.string().required(),
         KAKAO_REDIRECT_LOGIN_URI: Joi.string().required(),
         KAKAO_CLIENT_SECRET: Joi.string().required(),
-        KAKAO_REDIRECT_SIGNUP_URI: Joi.string().required(),
+        NAVER_CLIENT_ID: Joi.string().required(),
+        NAVER_CLIENT_SECRET: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         COOKIE_SECRET: Joi.string().required(),
       }),
@@ -44,7 +47,8 @@ import { ConfigService } from '@nestjs/config';
             kakaoRedirectSignupUri: process.env.KAKAO_REDIRECT_SIGNUP_URI,
             kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET,
             kakaoLoginUrl: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_REST_API_KEY}&redirect_uri=${process.env.KAKAO_REDIRECT_LOGIN_URI}&response_type=code`,
-            kakaoSignupUrl: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_REST_API_KEY}&redirect_uri=${process.env.KAKAO_REDIRECT_SIGNUP_URI}&response_type=code`,
+            naverClientId: process.env.NAVER_CLIENT_ID,
+            naverClientSecret: process.env.NAVER_CLIENT_SECRET,
             jwtSecret: process.env.JWT_SECRET,
             cookieSecret: process.env.COOKIE_SECRET,
           };
@@ -59,6 +63,19 @@ import { ConfigService } from '@nestjs/config';
     AnalysisModule,
     PrismaModule,
   ],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    // {
+    //   provide: AUTH_GUARD,
+    //   useClass: AuthGuard,
+    // },
+    // {
+    //   provide: ADMIN_GUARD,
+    //   useClass: AdminGuard,
+    // },
+  ],
 })
 export class AppModule {}
