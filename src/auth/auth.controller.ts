@@ -75,9 +75,7 @@ export class AuthController {
         signed: true,
         httpOnly: true,
       });
-      res.json({
-        Message: 'success',
-      });
+      res.redirect('http://localhost:3000/');
     } catch (e) {
       console.log(e.message);
       throw new UnauthorizedException();

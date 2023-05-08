@@ -1,12 +1,15 @@
 import { IsInt, IsOptional } from 'class-validator';
-export class CreateRecommendDto {
-  @IsInt()
+
+export class FindBookmarkDto {
   @IsOptional()
-  movieId?: number;
   @IsInt()
+  id: number;
+
   @IsOptional()
-  musicId?: number;
   @IsInt()
+  postId: number;
+
   @IsOptional()
-  bookId?: number;
+  @IsInt()
+  categoryId: number;
 }
