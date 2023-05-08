@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePostDto } from './dto/create-post.dto';
+import { PostDto, RecommendDto } from './dto/create-post.dto';
 import { Post } from '@prisma/client';
-import { CreateRecommendDto } from './dto/create-recommend.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 
@@ -10,21 +9,30 @@ import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 export class PostsRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createPost(
-    createPostDto: CreatePostDto,
-    createRecommendDtos: CreateRecommendDto[],
-  ): Promise<Post> {
-    const post: Post = await this.prisma.post.create({ data: createPostDto });
-    if (createRecommendDtos != undefined) {
-      const datas = [];
-      for (const recommend of createRecommendDtos) {
-        datas.push({ postId: post.id, ...recommend });
-      }
-      await this.prisma.recommendContent.createMany({
-        data: datas,
-      });
-    }
+  async createPost(postDto: PostDto): Promise<Post> {
+    const post: Post = await this.prisma.post.create({ data: postDto });
     return post;
+  }
+
+  async createRecommendContents(
+    postId: number,
+    recommendContents: RecommendDto,
+  ): Promise<void> {
+    const movies = [];
+    const musics = [];
+    const books = [];
+    for (const movieId of recommendContents.movies) {
+      movies.push({ postId, movieId });
+    }
+    for (const musicId of recommendContents.musics) {
+      movies.push({ postId, musicId });
+    }
+    for (const bookId of recommendContents.books) {
+      movies.push({ postId, bookId });
+    }
+    await this.prisma.recommendContent.createMany({ data: movies });
+    await this.prisma.recommendContent.createMany({ data: musics });
+    await this.prisma.recommendContent.createMany({ data: books });
   }
 
   async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
@@ -35,7 +43,7 @@ export class PostsRepository {
   }
 
   async findPostsByUser(userId: number) {
-    // return await this.prisma.post.findMany({ where: { authorId: userId } });
+    return await this.prisma.post.findMany({ where: { authorId: userId } });
   }
 
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
@@ -43,10 +51,10 @@ export class PostsRepository {
   }
 
   async deletePostById(id: number) {
-    // await this.prisma.post.update({
-    //   where: { id: id },
-    //   data: { deletedAt: new Date() },
-    // });
+    await this.prisma.post.update({
+      where: { id: id },
+      data: { deletedAt: new Date() },
+    });
   }
 
   async findPostById(id: number) {
