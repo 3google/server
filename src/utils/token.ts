@@ -1,15 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import {
+  ACCESS_TOKEN_COOKIE_MAX_AGE,
+  REFRESH_TOKEN_COOKIE_MAX_AGE,
+} from './constants';
 
 @Injectable()
 export class Token {
   private jwtSecret: string;
-  private HOUR = 60 * 60 * 1000;
-  private DAY = 24 * this.HOUR;
-  private WEEK = 7 * this.DAY;
-  private ACCESS_TOKEN_COOKIE_MAX_AGE = 2 * this.HOUR;
-  private REFRESH_TOKEN_COOKIE_MAX_AGE = 2 * this.WEEK;
 
   constructor(private readonly configService: ConfigService) {
     this.jwtSecret = configService.get('jwtSecret');
@@ -18,7 +17,7 @@ export class Token {
     const payload = {
       userId,
       isAdmin,
-      expiresAt: Date.now() + this.ACCESS_TOKEN_COOKIE_MAX_AGE,
+      expiresAt: Date.now() + ACCESS_TOKEN_COOKIE_MAX_AGE,
     };
     const accessToken = jwt.sign(payload, this.jwtSecret);
     return accessToken;
@@ -28,7 +27,7 @@ export class Token {
     const payload = {
       userId,
       isAdmin,
-      expiresAt: Date.now() + this.REFRESH_TOKEN_COOKIE_MAX_AGE,
+      expiresAt: Date.now() + REFRESH_TOKEN_COOKIE_MAX_AGE,
     };
     const refreshToken = jwt.sign(payload, this.jwtSecret);
     return refreshToken;
