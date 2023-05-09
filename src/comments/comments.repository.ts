@@ -9,7 +9,7 @@ export class CommentsRepository {
   async createComment(createCommentDto: CreateCommentDto) {
     const { authorId, content, postId } = createCommentDto;
 
-    return this.prisma.comment.create({
+    return await this.prisma.comment.create({
       data: {
         content: content,
         authorId: authorId,
@@ -19,7 +19,7 @@ export class CommentsRepository {
   }
   // 댓글 업데이트
   async updateComment(id: number, content: string) {
-    return this.prisma.comment.update({
+    return await this.prisma.comment.update({
       where: { id: id },
       data: {
         content: content,
@@ -29,8 +29,23 @@ export class CommentsRepository {
 
   // 댓글 삭제
   async deleteComment(commentId: number) {
-    return this.prisma.comment.delete({
+    return await this.prisma.comment.delete({
       where: { id: commentId },
+    });
+  }
+
+  async deleteCommentsByPostId(postId: number) {
+    return await this.prisma.comment.updateMany({
+      where: { postId },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  //댓글 조회
+  async findCommentsByPostId(postId: number) {
+    return await this.prisma.comment.findMany({
+      where: { postId },
+      include: { author: true },
     });
   }
 }

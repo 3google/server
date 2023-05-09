@@ -70,9 +70,9 @@ export class PostsController {
 
   @Delete('/:postId')
   async deletePostById(@Param('postId') id: number) {
-    await this.postsService.deletePostById(Number(id));
+    const message = await this.postsService.deletePostById(Number(id));
     return {
-      message: '정상적으로 게시글이 삭제되었습니다.',
+      message,
     };
   }
 }

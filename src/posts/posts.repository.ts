@@ -30,9 +30,11 @@ export class PostsRepository {
     for (const bookId of recommendContents.books) {
       movies.push({ postId, bookId });
     }
-    await this.prisma.recommendContent.createMany({ data: movies });
-    await this.prisma.recommendContent.createMany({ data: musics });
-    await this.prisma.recommendContent.createMany({ data: books });
+    await Promise.all([
+      this.prisma.recommendContent.createMany({ data: movies }),
+      this.prisma.recommendContent.createMany({ data: musics }),
+      this.prisma.recommendContent.createMany({ data: books }),
+    ]);
   }
 
   async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
@@ -51,7 +53,7 @@ export class PostsRepository {
   }
 
   async deletePostById(id: number) {
-    await this.prisma.post.update({
+    return await this.prisma.post.update({
       where: { id: id },
       data: { deletedAt: new Date() },
     });
