@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PostDto, RecommendDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
 import { Post } from '@prisma/client';
 import { FindPostsQueryDto } from './dto/find-posts-query.dto';
+import { CommentsRepository } from 'src/comments/comments.repository';
+import { errorHandler } from 'src/middleware/errorHandler';
 
 @Injectable()
 export class PostsService {
-  constructor(private postRepository: PostsRepository) {}
+  constructor(
+    private postRepository: PostsRepository,
+    private commentsRepository: CommentsRepository,
+  ) {}
 
   async createPost(postDto: PostDto): Promise<Post> {
     return await this.postRepository.createPost(postDto);
@@ -36,11 +41,26 @@ export class PostsService {
   }
 
   async deletePostById(id: number) {
-    //댓글이랑 추천 컨텐츠도 삭제해야 함
-    await this.postRepository.deletePostById(id);
+    if ((await this.postRepository.findPostById(id)) == null) {
+      errorHandler(
+        '게시글이 삭제에 실패했습니다.',
+        '해당 게시글이 존재하지 않습니다.',
+      );
+    }
+    const [isDeleted, deletedComments] = await Promise.all([
+      this.postRepository.deletePostById(id),
+      this.commentsRepository.deleteCommentsByPostId(id),
+    ]);
+    if (isDeleted !== null) {
+      return '정상적으로 게시글이 삭제되었습니다.';
+    }
   }
 
   async findPostById(id: number) {
-    return await this.postRepository.findPostById(id);
+    const [post, comments] = await Promise.all([
+      this.postRepository.findPostById(id),
+      this.commentsRepository.findCommentsByPostId(id),
+    ]);
+    return { post, comments };
   }
 }
