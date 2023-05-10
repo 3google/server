@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   HttpCode,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,15 +17,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AdminGuard, AuthGuard } from 'src/auth/auth.guard';
 import { Request } from 'express';
 import { MypageResultDto } from './dto/mypage-result.dto';
+import { Cookie } from 'src/utils/cookie';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly cookie: Cookie,
+  ) {}
 
   @Get('/mypage')
   @UseGuards(AuthGuard)
@@ -38,24 +38,25 @@ export class UsersController {
       data: {
         nickname: user.nickname,
         profileImg: user.profileImage,
+        social: user.platform,
+        // myPostsCnt:
+        // myCommentsCnt:
       },
       message: '내 정보',
       statusCode: 200,
     } as MypageResultDto;
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Delete('/account')
+  @UseGuards(AuthGuard)
+  async softDelete(@Res({ passthrough: true }) res, @Req() req: Request) {
+    this.cookie.clearAuthCookies(res);
+    await this.usersService.softDelete(req.userId);
+    return { message: '탈퇴처리 되었습니다.' };
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
+  //TODO: restore 프론트와 상의
 }

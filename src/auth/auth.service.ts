@@ -8,6 +8,7 @@ import { Platform } from 'src/users/dto/platform.enum';
 import { Token } from 'src/utils/token';
 import { NaverUserDto } from './dto/naver-user.dto';
 import { errorHandler } from 'src/middleware/errorHandler';
+import { UsersService } from 'src/users/users.service';
 
 // signup의 인자로 code를 받고 내부에서 this.authService.fetchKakaoUser(code);
 // 그러면 kakao의 user 정보가 리턴됨
@@ -15,7 +16,7 @@ import { errorHandler } from 'src/middleware/errorHandler';
 // db에 생성요청
 // 그 전에 이미 가입 여부 검증
 // ------
-//TODO: 네이버 로그인 서비스 로직 구현(유저 정보 가져오는 것부터)
+
 @Injectable()
 export class AuthService {
   private kakaoClientId: string;
@@ -30,6 +31,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly usersRepository: UsersRepository,
     private readonly token: Token,
+    private readonly usersService: UsersService,
   ) {
     this.kakaoClientId = configService.get('kakaoRestApiKey');
     this.kakaoRedirectLoginUri = configService.get('kakaoRedirectLoginUri');
@@ -89,8 +91,10 @@ export class AuthService {
         profile_image_url,
         Platform.KAKAO,
       );
-      const { id, isAdmin } = await this.usersRepository.create(createUserDto);
-      return { id, isAdmin };
+      // const { id, isAdmin } = await this.usersRepository.create(createUserDto);
+      const user = await this.usersRepository.create(createUserDto);
+      return user;
+      // return { id, isAdmin };
     }
     if (foundUser.platform == 'NAVER') {
       errorHandler(
@@ -98,8 +102,8 @@ export class AuthService {
         `${foundUser.platform}로 회원가입한 유저입니다.`,
       );
     }
-    const { id, isAdmin } = foundUser;
-    return { id, isAdmin };
+    // const { id, isAdmin } = foundUser;
+    return foundUser;
   }
 
   //네이버 유저 정보 가져오기
@@ -151,8 +155,10 @@ export class AuthService {
         profile_image,
         Platform.NAVER,
       );
-      const { id, isAdmin } = await this.usersRepository.create(createUserDto);
-      return { id, isAdmin };
+      // const { id, isAdmin } = await this.usersRepository.create(createUserDto);
+      const user = await this.usersRepository.create(createUserDto);
+      return user;
+      // return { id, isAdmin };
     }
     if (foundUser.platform == 'KAKAO') {
       errorHandler(
@@ -160,7 +166,7 @@ export class AuthService {
         `${foundUser.platform}로 회원가입한 유저입니다.`,
       );
     }
-    const { id, isAdmin } = foundUser;
-    return { id, isAdmin };
+    // const { id, isAdmin } = foundUser;
+    return foundUser;
   }
 }

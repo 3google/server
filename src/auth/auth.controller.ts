@@ -49,17 +49,17 @@ export class AuthController {
     @Res({ passthrough: true }) res,
   ) {
     console.log(`code: ${code}`);
-    try {
-      if (code === null || code === undefined) {
-        throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
-      }
-      const user = await this.authService.kakaoLogin(code);
-      this.cookie.setAuthCookies(user.id, user.isAdmin, res);
+    if (code === null || code === undefined)
+      errorHandler('로그인 실패', `카카오 로그인 정보가 없습니다.`);
+    const user = await this.authService.kakaoLogin(code);
+    if (user.deletedAt !== null) {
+      //TODO: 프론트와 상의 후 restore controller구축
+      errorHandler('로그인 실패', `이미 탈퇴 처리된 회원입니다.`);
       // res.redirect('http://localhost:3000/');
-    } catch (e) {
-      console.log(e.message);
-      throw new UnauthorizedException();
+      return;
     }
+    this.cookie.setAuthCookies(user.id, user.isAdmin, res);
+    // res.redirect('http://localhost:3000/');
     return { message: '로그인에 성공했습니다.' };
   }
 
@@ -77,16 +77,20 @@ export class AuthController {
       errorHandler('로그인 실패', `네이버 로그인 정보가 없습니다.`);
     }
     const user = await this.authService.naverLogin(code);
+    if (user.deletedAt !== null) {
+      // errorHandler('로그인 실패', `이미 탈퇴 처리된 회원입니다.`);
+      // res.redirect('http://localhost:3000/');
+      return;
+    }
     this.cookie.setAuthCookies(user.id, user.isAdmin, res);
     // res.redirect('http://localhost:3000/');
     return { message: '로그인에 성공했습니다.' };
   }
 
-  //TODO 로그아웃 포스트
   //로그아웃
   @Post('/logout')
   logout(@Res({ passthrough: true }) res) {
     this.cookie.clearAuthCookies(res);
-    res.json({ message: 'logout success' });
+    return { message: '로그아웃 되셨습니다.' };
   }
 }
