@@ -10,7 +10,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response/response.interceptor';
 import { KakaoModule } from './users/kakao.module';
 import { BookmarkCategoriesModule } from './bookmark-categories/bookmarkCategories.module';
-// Config에 추가한 환경 변수가 valid한지 확인해주는 모듈(joi)
+import { AdminGuard, AuthGuard } from './auth/auth.guard';
+// import { ADMIN_GUARD, AUTH_GUARD } from '@nestjs/core/constants';
 
 @Module({
   imports: [
@@ -23,8 +24,21 @@ import { BookmarkCategoriesModule } from './bookmark-categories/bookmarkCategori
     BookmarkCategoriesModule,
     AnalysisModule,
     PrismaModule,
-    BookmarkCategoriesModule,
+    BookmarkCategoriesModule, // 왜 두개?
   ],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    // {
+    //   provide: AUTH_GUARD,
+    //   useClass: AuthGuard,
+    // },
+    // {
+    //   provide: ADMIN_GUARD,
+    //   useClass: AdminGuard,
+    // },
+  ],
 })
 export class AppModule {}
