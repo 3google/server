@@ -37,7 +37,13 @@ export class PostsService {
   }
 
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
-    return await this.postRepository.findPostsByQuery(postsQueryDto);
+    const posts = await this.postRepository.findPostsByQuery(postsQueryDto);
+    for (const post of posts) {
+      if (post.author.deletedAt) {
+        post.author.nickname = '삭제된 사용자';
+      }
+    }
+    return posts;
   }
 
   async deletePostById(id: number) {
@@ -61,6 +67,14 @@ export class PostsService {
       this.postRepository.findPostById(id),
       this.commentsRepository.findCommentsByPostId(id),
     ]);
+    if (post.author.deletedAt) {
+      post.author.nickname = '삭제된 사용자';
+    }
+    for (const comment of comments) {
+      if (comment.author.deletedAt) {
+        comment.author.nickname = '삭제된 사용자';
+      }
+    }
     return { post, comments };
   }
 }
