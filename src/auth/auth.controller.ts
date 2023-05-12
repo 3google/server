@@ -48,18 +48,10 @@ export class AuthController {
     @Query('code') code: string, // 카카오 로그인 성공시 건네준 인가코드를 쿼리 파라미터로 받아옴
     @Res({ passthrough: true }) res,
   ) {
-    console.log(`code: ${code}`);
-    if (code === null || code === undefined)
-      errorHandler('로그인 실패', `카카오 로그인 정보가 없습니다.`);
+    // console.log(`code: ${code}`);
     const user = await this.authService.kakaoLogin(code);
-    if (user.deletedAt !== null) {
-      //TODO: 프론트와 상의 후 restore controller구축
-      errorHandler('로그인 실패', `이미 탈퇴 처리된 회원입니다.`);
-      // res.redirect('http://localhost:3000/');
-      return;
-    }
     this.cookie.setAuthCookies(user.id, user.isAdmin, res);
-    // res.redirect('http://localhost:3000/');
+    // res.redirect('http://localhost:3000/'); //! 나중에 주석(redirect) 풀기
     return { message: '로그인에 성공했습니다.' };
   }
 
@@ -73,17 +65,9 @@ export class AuthController {
     @Query('code') code: string,
     @Res({ passthrough: true }) res,
   ) {
-    if (code === null || code === undefined) {
-      errorHandler('로그인 실패', `네이버 로그인 정보가 없습니다.`);
-    }
     const user = await this.authService.naverLogin(code);
-    if (user.deletedAt !== null) {
-      // errorHandler('로그인 실패', `이미 탈퇴 처리된 회원입니다.`);
-      // res.redirect('http://localhost:3000/');
-      return;
-    }
     this.cookie.setAuthCookies(user.id, user.isAdmin, res);
-    // res.redirect('http://localhost:3000/');
+    // res.redirect('http://localhost:3000/'); //! 나중에 주석(redirect) 풀기
     return { message: '로그인에 성공했습니다.' };
   }
 

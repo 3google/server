@@ -5,11 +5,22 @@ import { UsersRepository } from './users.repository';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { Token } from 'src/utils/token';
 import { Cookie } from 'src/utils/cookie';
+import { PostsService } from 'src/posts/posts.service';
+import { PostsRepository } from 'src/posts/posts.repository';
+import { CommentsRepository } from 'src/comments/comments.repository';
 
 @Module({
   imports: [PrismaModule],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, Token, Cookie],
-  exports: [UsersRepository],
+  providers: [
+    UsersService,
+    UsersRepository,
+    Token,
+    Cookie,
+    PostsService,
+    PostsRepository,
+    CommentsRepository,
+  ],
+  exports: [UsersRepository, UsersService],
 })
 export class UsersModule {}

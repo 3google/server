@@ -18,11 +18,13 @@ import { AdminGuard, AuthGuard } from 'src/auth/auth.guard';
 import { Request } from 'express';
 import { MypageResultDto } from './dto/mypage-result.dto';
 import { Cookie } from 'src/utils/cookie';
+import { PostsService } from 'src/posts/posts.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly postsService: PostsService,
     private readonly cookie: Cookie,
   ) {}
 
@@ -32,14 +34,14 @@ export class UsersController {
     console.log(req.userId);
 
     const user = await this.usersService.findById(req.userId);
-
+    const myPostsCnt = await this.postsService.findPostsByUser(req.userId);
     return {
-      // TODO: 나머지 속성
+      // TODO: 충진님 댓글 조회 service 업데이트 되면 추가하기
       data: {
         nickname: user.nickname,
         profileImg: user.profileImage,
         social: user.platform,
-        // myPostsCnt:
+        myPostsCnt: myPostsCnt.length,
         // myCommentsCnt:
       },
       message: '내 정보',
@@ -58,5 +60,4 @@ export class UsersController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
-  //TODO: restore 프론트와 상의
 }

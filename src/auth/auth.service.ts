@@ -56,7 +56,6 @@ export class AuthService {
     };
     // const {
     //   data: { access_token }, //토큰!! 이걸로 유저 정보 가져올 수 있음
-    // }
     const res = await axios.post('https://kauth.kakao.com/oauth/token', data, {
       headers,
     }); //토큰 요청해서 카카오에서 토큰 받아오기
@@ -101,6 +100,9 @@ export class AuthService {
         '로그인 실패',
         `${foundUser.platform}로 회원가입한 유저입니다.`,
       );
+    }
+    if (foundUser.deletedAt !== null) {
+      this.usersService.restoreUser(foundUser.id);
     }
     // const { id, isAdmin } = foundUser;
     return foundUser;
@@ -165,6 +167,9 @@ export class AuthService {
         '로그인 실패',
         `${foundUser.platform}로 회원가입한 유저입니다.`,
       );
+    }
+    if (foundUser.deletedAt !== null) {
+      this.usersService.restoreUser(foundUser.id);
     }
     // const { id, isAdmin } = foundUser;
     return foundUser;
