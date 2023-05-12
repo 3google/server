@@ -49,7 +49,10 @@ export class PostsRepository {
   }
 
   async findPostsByQuery(postsQueryDto: FindPostsQueryDto) {
-    return await this.prisma.post.findMany({ where: postsQueryDto });
+    return await this.prisma.post.findMany({
+      where: postsQueryDto,
+      include: { author: true },
+    });
   }
 
   async deletePostById(id: number) {
@@ -60,6 +63,9 @@ export class PostsRepository {
   }
 
   async findPostById(id: number) {
-    return await this.prisma.post.findUnique({ where: { id: id } });
+    return await this.prisma.post.findUnique({
+      where: { id: id },
+      include: { author: true },
+    });
   }
 }
