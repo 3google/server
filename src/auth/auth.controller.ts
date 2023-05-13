@@ -48,18 +48,10 @@ export class AuthController {
     @Query('code') code: string, // 카카오 로그인 성공시 건네준 인가코드를 쿼리 파라미터로 받아옴
     @Res({ passthrough: true }) res,
   ) {
-    console.log(`code: ${code}`);
-    try {
-      if (code === null || code === undefined) {
-        throw new BadRequestException(`카카오 로그인 정보가 없습니다.`);
-      }
-      const user = await this.authService.kakaoLogin(code);
-      this.cookie.setAuthCookies(user.id, user.isAdmin, res);
-      // res.redirect('http://localhost:3000/');
-    } catch (e) {
-      console.log(e.message);
-      throw new UnauthorizedException();
-    }
+    // console.log(`code: ${code}`);
+    const user = await this.authService.kakaoLogin(code);
+    this.cookie.setAuthCookies(user.id, user.isAdmin, res);
+    // res.redirect('http://localhost:3000/'); //! 나중에 주석(redirect) 풀기
     return { message: '로그인에 성공했습니다.' };
   }
 
@@ -73,20 +65,16 @@ export class AuthController {
     @Query('code') code: string,
     @Res({ passthrough: true }) res,
   ) {
-    if (code === null || code === undefined) {
-      errorHandler('로그인 실패', `네이버 로그인 정보가 없습니다.`);
-    }
     const user = await this.authService.naverLogin(code);
     this.cookie.setAuthCookies(user.id, user.isAdmin, res);
-    // res.redirect('http://localhost:3000/');
+    // res.redirect('http://localhost:3000/'); //! 나중에 주석(redirect) 풀기
     return { message: '로그인에 성공했습니다.' };
   }
 
-  //TODO 로그아웃 포스트
   //로그아웃
   @Post('/logout')
   logout(@Res({ passthrough: true }) res) {
     this.cookie.clearAuthCookies(res);
-    res.json({ message: 'logout success' });
+    return { message: '로그아웃 되셨습니다.' };
   }
 }

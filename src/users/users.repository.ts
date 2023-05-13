@@ -40,9 +40,31 @@ export class UsersRepository {
   async findById(id: number) {
     const userById = await this.prismaService.user.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     return userById;
+  }
+
+  async softDelete(id: number) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
+
+  async restoreUser(id: number) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: null,
+      },
+    });
   }
 }
