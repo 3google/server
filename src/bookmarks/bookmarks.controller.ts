@@ -13,6 +13,8 @@ import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { FindBookmarkDto } from './dto/find-bookmark.dto';
 import { Bookmark as BookmarkModel } from '@prisma/client';
+import { FindBookmarkDto } from './dto/find-bookmark.dto';
+import { Bookmark as BookmarkModel } from '@prisma/client';
 
 @Controller('bookmarks')
 export class BookmarksController {
