@@ -46,7 +46,7 @@ export class CommentsController {
   }
 
 
-  // 유저 > 댓글 조회 
+  // 사용자 작성 댓글 목록 조회
   @Get('/:userId')
   async findCommentById(@Param('userId', ParseIntPipe) userId : number){
     const comment = this.commentsService.findCommentById(userId);
