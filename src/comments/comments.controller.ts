@@ -8,6 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { CommentService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -41,9 +43,14 @@ export class CommentsController {
   // 댓글 삭제
   @Delete('/:comment_id')
   async delete(@Param('comment_id', ParseIntPipe) commentId: number) {
-    const comment = this.commentsService.deleteComment(commentId);
-    return { 
-      comment,
+    try {
+      const comment = await this.commentsService.deleteComment(commentId);
+      return { 
+        comment,
+      };
+    } catch (error) {
+      console.error(`Failed to delete comment: ${error}`);
+      throw new HttpException('Failed to delete comment', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

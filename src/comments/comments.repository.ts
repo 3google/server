@@ -45,9 +45,24 @@ export class CommentsRepository {
 
   // 댓글 삭제
   async deleteComment(commentId: number) {
-    return await this.prisma.comment.delete({
-      where: { id: commentId },
-    });
+    try {
+      const existingComment = await this.prisma.comment.findUnique({
+        where: { id: commentId },
+      });
+    
+      if (!existingComment) {
+        throw new Error("Comment not found");
+      }
+
+      const deleteComment = await this.prisma.comment.delete({
+        where: { id: commentId },
+      });
+
+      return deleteComment;
+    } catch (error) {
+      console.error(`Failed to delete comment: ${error}`);
+      throw new Error("Failed to delete comment");
+    }
   }
 
   async deleteCommentsByPostId(postId: number) {
