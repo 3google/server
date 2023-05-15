@@ -30,9 +30,9 @@ export class CommentsController {
     }
   }
   // 댓글 수정
-  @Patch('/:id')
-  async update(@Param('id', ParseIntPipe) id: number, content: string) {
-    const comment = this.commentsService.updateComment(id, content);
+  @Patch('/:commentId')
+  async update(@Param('commentId', ParseIntPipe) commentId: number, content: string) {
+    const comment = this.commentsService.updateComment(commentId, content);
     return { 
       data : comment, 
       message : '댓글이 정상적으로 수정되었습니다'

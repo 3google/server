@@ -12,8 +12,8 @@ export class CommentService {
   }
 
   // 댓글 업데이트
-  async updateComment(id: number, content: string) {
-    return await this.commentsRepository.updateComment(id, content);
+  async updateComment(commentId: number, content: string) {
+    return await this.commentsRepository.updateComment(commentId, content);
   }
 
   // 댓글 삭제

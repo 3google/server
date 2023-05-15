@@ -19,13 +19,28 @@ export class CommentsRepository {
     });
   }
   // 댓글 업데이트
-  async updateComment(id: number, content: string) {
-    return await this.prisma.comment.update({
-      where: { id: id },
-      data: {
-        content: content,
-      },
+  async updateComment(commentId: number, content: string) {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
     });
+  
+    console.log(existingComment)
+    if (!existingComment) {
+      throw new Error("Comment not found"); // 댓글이 존재하지 않으면 에러 처리
+    }
+    try { 
+      const updateComment = await this.prisma.comment.update({
+        where: { id: commentId },
+        data: {
+          content: content,
+        },
+      });
+      console.log(updateComment);
+      return updateComment;
+    } catch (error){
+      console.error(`Failed to update comment: ${error}`);
+      throw new Error("Failed to update comment");
+    }
   }
 
   // 댓글 삭제
