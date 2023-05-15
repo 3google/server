@@ -24,13 +24,21 @@ export class CommentsController {
     @Body() createCommentDto: CreateCommentDto,
     @Param('postId', ParseIntPipe) postId: number,
   ) {
-    createCommentDto.postId = postId;
-    const comment =  this.commentsService.createComment(createCommentDto);
-    return {
-      data : comment, 
-      message : '댓글이 정상적으로 저장되었습니다'
+    // 유효성 검사
+    const { content } = createCommentDto;
+    if (!content) {
+      throw new HttpException('댓글 내용이 필요합니다.', HttpStatus.BAD_REQUEST);
     }
+
+    createCommentDto.postId = postId;
+    const comment = await this.commentsService.createComment(createCommentDto);
+
+    return {
+      data: comment, 
+      message: '댓글이 정상적으로 저장되었습니다.'
+    };
   }
+  
   // 댓글 수정
   @Patch('/:commentId')
   async update(@Param('commentId', ParseIntPipe) commentId: number, content: string) {
