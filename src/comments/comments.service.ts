@@ -22,8 +22,8 @@ export class CommentService {
   }
 
   // 유저 > 댓글 조회 
-  async findCommentById(id : number) {
-    return await this.commentsRepository.findCommentById(id);
+  async findCommentById(authorId : number) {
+    return await this.commentsRepository.findCommentById(authorId);
   }
 
   // 유저 > 댓글 삭제 

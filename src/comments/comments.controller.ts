@@ -38,7 +38,7 @@ export class CommentsController {
       message: '댓글이 정상적으로 저장되었습니다.'
     };
   }
-  
+
   // 댓글 수정
   @Patch('/:commentId')
   async update(@Param('commentId', ParseIntPipe) commentId: number, content: string) {
@@ -64,14 +64,22 @@ export class CommentsController {
 
 
   // 마이페이지 >  사용자 작성 댓글 목록 조회
-  @Get('/:userId')
-  async findCommentById(@Param('userId', ParseIntPipe) userId : number){
-    const comment = this.commentsService.findCommentById(userId);
-    return { 
-      data : comment, 
-      message : '유저의 댓글이 정상적으로 조회되었습니다'
-    };
-
+  @Get('/:authorId')
+  async findCommentById(@Param('authorId', ParseIntPipe) authorId : number) {
+    try {
+      if (!authorId) {
+        throw new HttpException('작성자 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+      }
+  
+      const comments = await this.commentsService.findCommentById(authorId);
+      return { 
+        data: comments, 
+        message: '유저의 댓글이 정상적으로 조회되었습니다.',
+      };
+    } catch (error) {
+      console.error(`Failed to find user's comments: ${error}`);
+      throw new HttpException('댓글 조회에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // 마이페이지 > 댓글 삭제 

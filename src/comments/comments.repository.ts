@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BoardType, Emotion } from '@prisma/client';
@@ -85,11 +85,20 @@ export class CommentsRepository {
   }
 
   // 유저 > 댓글 조회 
-  async findCommentById(userId: number) {
-    return await this.prisma.comment.findUnique({
-      where : { id: userId }, 
-      include : { author: true },
-    })
+  async findCommentById(authorId: number) {
+    try {
+      if (!authorId) {
+        throw new HttpException('작성자 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+      }
+  
+      return await this.prisma.comment.findUnique({
+        where: { id: authorId },
+        include: { author: true },
+      });
+    } catch (error) {
+      console.error(`Failed to find comment by ID: ${error}`);
+      throw new HttpException('댓글 조회에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // 유저 > 댓글 삭제 
