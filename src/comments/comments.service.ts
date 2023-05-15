@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CommentsRepository } from './comments.repository';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { BoardType, Emotion } from '@prisma/client';
 
 @Injectable()
 export class CommentService {
@@ -28,6 +29,11 @@ export class CommentService {
   // 유저 > 댓글 삭제 
   async deleteCommentById(id: number) { 
     return await this.commentsRepository.deleteCommentById(id);
+  }
+
+  // 관리자 > 전체 댓글 조회
+  async findCommentByAdmin(userId: number, boardType: BoardType, emotions: Emotion){
+    return await this.commentsRepository.findCommentByAdmin(userId, boardType, emotions);
   }
 
 }

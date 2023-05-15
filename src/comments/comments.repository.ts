@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { BoardType, Emotion } from '@prisma/client';
 
 @Injectable()
 export class CommentsRepository {
@@ -64,5 +65,17 @@ export class CommentsRepository {
     })
 
   }
+
+  // 관리자 > 전체 댓글 조회
+  async findCommentByAdmin(userId: number, boardType: BoardType, emotion: Emotion) {
+    return await this.prisma.post.findMany({
+      where: {
+        id: userId, 
+        boardType: boardType, 
+        emotion: emotion,
+      },
+    });
+  }
+
 
 }

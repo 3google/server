@@ -7,9 +7,11 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { CommentService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { BoardType, Emotion } from '@prisma/client';
 
 @Controller('comments')
 export class CommentsController {
@@ -59,7 +61,7 @@ export class CommentsController {
 
   // 마이페이지 > 댓글 삭제 
   @Delete('/:commentId')
-  async deleteCommentById(@Param('commentId)') id: number, ParseIntPipe) {
+  async deleteCommentById(@Param('commentId', ParseIntPipe) id: number) {
     const message = await this.commentsService.deleteComment(id);
     return { 
       message, 
@@ -67,7 +69,20 @@ export class CommentsController {
   }
 
   // 관리자 > 전체 댓글 조회
+  @Get('/')
+  async findCommentByAdmin(
+    @Query('userId', ParseIntPipe) userId: number,
+    @Query('boardType') boardType: BoardType,
+    @Query('emotions') emotions: Emotion){
+      return this.commentsService.findCommentByAdmin(userId, boardType, emotions);
+
+  }    
+
 
   // 관리자 > 사용자 댓글 삭제 
+  @Delete('/:comment_id')
+  async deleteCommentByAdmin() {
+
+  }
 
 }
