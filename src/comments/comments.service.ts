@@ -19,4 +19,15 @@ export class CommentService {
   async deleteComment(commentId: number) {
     return await this.commentsRepository.deleteComment(commentId);
   }
+
+  // 유저 > 댓글 조회 
+  async findCommentById(id : number) {
+    return await this.commentsRepository.findCommentById(id);
+  }
+
+  // 유저 > 댓글 삭제 
+  async deleteCommentById(id: number) { 
+    return await this.commentsRepository.deleteCommentById(id);
+  }
+
 }

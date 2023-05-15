@@ -48,4 +48,21 @@ export class CommentsRepository {
       include: { author: true },
     });
   }
+
+  // 유저 > 댓글 조회 
+  async findCommentById(userId: number) {
+    return await this.prisma.comment.findUnique({
+      where : { id: userId }, 
+      include : { author: true },
+    })
+  }
+
+  // 유저 > 댓글 삭제 
+  async deleteCommentById(userId: number) { 
+    return await this.prisma.comment.delete({
+      where: { id : userId },
+    })
+
+  }
+
 }
