@@ -46,7 +46,7 @@ export class CommentsController {
   }
 
 
-  // 사용자 작성 댓글 목록 조회
+  // 마이페이지 >  사용자 작성 댓글 목록 조회
   @Get('/:userId')
   async findCommentById(@Param('userId', ParseIntPipe) userId : number){
     const comment = this.commentsService.findCommentById(userId);
@@ -57,7 +57,7 @@ export class CommentsController {
 
   }
 
-  // 유저 > 댓글 삭제 
+  // 마이페이지 > 댓글 삭제 
   @Delete('/:commentId')
   async deleteCommentById(@Param('commentId)') id: number, ParseIntPipe) {
     const message = await this.commentsService.deleteComment(id);
@@ -65,5 +65,9 @@ export class CommentsController {
       message, 
     }
   }
+
+  // 관리자 > 전체 댓글 조회
+
+  // 관리자 > 사용자 댓글 삭제 
 
 }
