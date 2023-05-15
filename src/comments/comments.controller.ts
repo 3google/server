@@ -108,14 +108,40 @@ export class CommentsController {
     @Query('userId', ParseIntPipe) userId: number,
     @Query('boardType') boardType: BoardType,
     @Query('emotions') emotions: Emotion){
-      return this.commentsService.findCommentByAdmin(userId, boardType, emotions);
-
+      try {
+        if (userId && typeof userId !== 'number') {
+          throw new HttpException('유효하지 않은 사용자 ID입니다.', HttpStatus.BAD_REQUEST);
+        }
+    
+        // 나머지 유효성 검사 로직
+    
+        return this.commentsService.findCommentByAdmin(userId, boardType, emotions);
+      } catch (error) {
+        console.error(`Failed to retrieve comments by admin: ${error}`);
+        throw new HttpException('댓글 조회에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
   }    
 
   // 관리자 > 댓글 삭제
   @Delete('/:commentId')
   async deleteCommentByAdmin(@Param('commentId', ParseIntPipe) id: number) {
-    const message = await this.commentsService.deleteCommentByAdmin(id);
+    try {
+      if (!id) {
+        throw new HttpException('댓글 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+      }
+  
+      const existingComment = await this.commentsService.findCommentById(id);
+  
+      if (!existingComment) {
+        throw new HttpException('삭제할 댓글이 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+      }
+  
+      const message = await this.commentsService.deleteCommentByAdmin(id);
+      return { message };
+    } catch (error) {
+      console.error(`Failed to delete comment by admin: ${error}`);
+      throw new HttpException('댓글 삭제에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
 }

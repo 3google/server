@@ -127,10 +127,16 @@ export class CommentsRepository {
 
   // 관리자 > 전체 댓글 조회
   async findCommentByAdmin(userId: number, boardType: BoardType, emotion: Emotion) {
+    if (!userId) {
+      throw new HttpException('사용자 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+    }
+  
+    // 나머지 필요한 유효성 검사 로직 추가
+  
     return await this.prisma.post.findMany({
       where: {
-        id: userId, 
-        boardType: boardType, 
+        id: userId,
+        boardType: boardType,
         emotion: emotion,
       },
     });
@@ -138,9 +144,15 @@ export class CommentsRepository {
 
   // 관리자 > 댓글 삭제
   async deleteCommentByAdmin(commentId: number) {
+    if (!commentId) {
+      throw new HttpException('댓글 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+    }
+  
+    // 나머지 필요한 유효성 검사 로직 추가
+  
     return await this.prisma.comment.delete({
-      where : { id: commentId },
-    })
+      where: { id: commentId },
+    });
   }
 
 }
