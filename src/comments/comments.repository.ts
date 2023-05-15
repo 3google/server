@@ -10,6 +10,10 @@ export class CommentsRepository {
   async createComment(createCommentDto: CreateCommentDto) {
     const { authorId, content, postId } = createCommentDto;
 
+    if (!authorId || !content || !postId) {
+      throw new Error('댓글 작성에 필요한 필드가 누락되었습니다.');
+    }
+  
     return await this.prisma.comment.create({
       data: {
         content: content,
