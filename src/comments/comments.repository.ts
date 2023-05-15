@@ -103,10 +103,26 @@ export class CommentsRepository {
 
   // 유저 > 댓글 삭제 
   async deleteCommentById(userId: number) { 
-    return await this.prisma.comment.delete({
-      where: { id : userId },
-    })
-
+    try {
+      if (!userId) {
+        throw new HttpException('사용자 ID가 필요합니다.', HttpStatus.BAD_REQUEST);
+      }
+  
+      const existingComment = await this.prisma.comment.findUnique({
+        where: { id: userId },
+      });
+  
+      if (!existingComment) {
+        throw new HttpException('삭제할 댓글이 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+      }
+  
+      return await this.prisma.comment.delete({
+        where: { id: userId },
+      });
+    } catch (error) {
+      console.error(`Failed to delete comment: ${error}`);
+      throw new HttpException('댓글 삭제에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // 관리자 > 전체 댓글 조회

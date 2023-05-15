@@ -83,11 +83,22 @@ export class CommentsController {
   }
 
   // 마이페이지 > 댓글 삭제 
-  @Delete('/:commentId')
+  @Delete('/user/:commentId')
   async deleteCommentById(@Param('commentId', ParseIntPipe) id: number) {
-    const message = await this.commentsService.deleteComment(id);
-    return { 
-      message, 
+    try {
+      const existingComment = await this.commentsService.findCommentById(id);
+  
+      if (!existingComment) {
+        throw new HttpException('삭제할 댓글이 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+      }
+  
+      const message = await this.commentsService.deleteComment(id);
+      return {
+        message,
+      };
+    } catch (error) {
+      console.error(`Failed to delete comment: ${error}`);
+      throw new HttpException('댓글 삭제에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
