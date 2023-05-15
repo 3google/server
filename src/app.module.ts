@@ -12,6 +12,7 @@ import { KakaoModule } from './users/kakao.module';
 import { BookmarkCategoriesModule } from './bookmark-categories/bookmarkCategories.module';
 // import { ADMIN_GUARD, AUTH_GUARD } from '@nestjs/core/constants';
 import { AdminModule } from './admin/admin.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AdminModule } from './admin/admin.module';
     PrismaModule,
     BookmarkCategoriesModule, // TODO:왜 두개?
     AdminModule,
+    FileModule,
   ],
   providers: [
     {
