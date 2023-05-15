@@ -78,11 +78,10 @@ export class CommentsController {
 
   }    
 
-
-  // 관리자 > 사용자 댓글 삭제 
-  @Delete('/:comment_id')
-  async deleteCommentByAdmin() {
-
+  // 관리자 > 댓글 삭제
+  @Delete('/:commentId')
+  async deleteCommentByAdmin(@Param('commentId', ParseIntPipe) id: number) {
+    const message = await this.commentsService.deleteCommentByAdmin(id);
   }
 
 }

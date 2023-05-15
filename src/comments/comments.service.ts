@@ -36,4 +36,9 @@ export class CommentService {
     return await this.commentsRepository.findCommentByAdmin(userId, boardType, emotions);
   }
 
+  // 관리자 > 댓글 삭제
+  async deleteCommentByAdmin(commentId: number) {
+    return await this.commentsRepository.deleteCommentByAdmin(commentId);
+  }
+
 }

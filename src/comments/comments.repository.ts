@@ -77,5 +77,11 @@ export class CommentsRepository {
     });
   }
 
+  // 관리자 > 댓글 삭제
+  async deleteCommentByAdmin(commentId: number) {
+    return await this.prisma.comment.delete({
+      where : { id: commentId },
+    })
+  }
 
 }
