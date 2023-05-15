@@ -21,16 +21,27 @@ export class CommentsController {
     @Param('postId', ParseIntPipe) postId: number,
   ) {
     createCommentDto.postId = postId;
-    return this.commentsService.createComment(createCommentDto);
+    const comment =  this.commentsService.createComment(createCommentDto);
+    return {
+      data : comment, 
+      message : '댓글이 정상적으로 저장되었습니다'
+    }
   }
   // 댓글 수정
   @Patch('/:id')
   async update(@Param('id', ParseIntPipe) id: number, content: string) {
-    return this.commentsService.updateComment(id, content);
+    const comment = this.commentsService.updateComment(id, content);
+    return { 
+      data : comment, 
+      message : '댓글이 정상적으로 수정되었습니다'
+    }
   }
   // 댓글 삭제
   @Delete('/:comment_id')
   async delete(@Param('comment_id', ParseIntPipe) commentId: number) {
-    return this.commentsService.deleteComment(commentId);
+    const comment = this.commentsService.deleteComment(commentId);
+    return { 
+      comment,
+    }
   }
 }
