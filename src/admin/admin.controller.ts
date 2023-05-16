@@ -3,7 +3,7 @@ import { AdminService } from './admin.service';
 import { AdminGuard } from 'src/auth/auth.guard';
 import { Cookie } from 'src/utils/cookie';
 
-@Controller('admin')
+@Controller('api/admin')
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,

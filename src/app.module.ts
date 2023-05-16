@@ -12,7 +12,7 @@ import { ResponseInterceptor } from './response/response.interceptor';
 import { KakaoModule } from './users/kakao.module';
 // import { ADMIN_GUARD, AUTH_GUARD } from '@nestjs/core/constants';
 import { AdminModule } from './admin/admin.module';
-import { FileModule } from './file/file.module';
+// import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -27,7 +27,7 @@ import { FileModule } from './file/file.module';
     PrismaModule,
     BookmarkCategoriesModule, // TODO:왜 두개?
     AdminModule,
-    FileModule,
+    // FileModule,
   ],
   providers: [
     {

@@ -10,22 +10,27 @@ import {
   Req,
   HttpCode,
   Res,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateNicknameDto } from './dto/update-nickname.dto';
 import { AdminGuard, AuthGuard } from 'src/auth/auth.guard';
 import { Request } from 'express';
 import { MypageResultDto } from './dto/mypage-result.dto';
 import { Cookie } from 'src/utils/cookie';
 import { PostsService } from 'src/posts/posts.service';
+import { UpdateImageDto } from './dto/update-image.dto';
+// import { FileService } from 'src/file/file.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly postsService: PostsService,
-    private readonly cookie: Cookie,
+    private readonly cookie: Cookie, // private readonly fileService: FileService,
   ) {}
 
   @Get('/mypage')
@@ -54,8 +59,29 @@ export class UsersController {
     return { message: '탈퇴처리 되었습니다.' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch('/account/nickname')
+  @UseGuards(AuthGuard)
+  async updateNickname(
+    @Body() updateNicknameDto: UpdateNicknameDto,
+    @Req() req: Request,
+  ) {
+    return this.usersService.updateNickname(
+      req.userId,
+      updateNicknameDto.nickname,
+    );
+  }
+
+  @Post('/account/profileImage')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async updateImage(
+    @Req() req: Request,
+    @UploadedFile() file: Express.MulterS3.File,
+  ) {
+    console.log(file);
+    return this.usersService.updateImage(
+      req.userId,
+      file ? file.location : null,
+    );
   }
 }

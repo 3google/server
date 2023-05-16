@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { errorHandler } from 'src/middleware/errorHandler';
 
@@ -11,6 +10,14 @@ export class UsersService {
   async findById(id: number) {
     const userById = await this.usersRepository.findById(id);
     return userById;
+  }
+
+  async updateNickname(id: number, nickname: string) {
+    return this.usersRepository.updateNickname(id, nickname);
+  }
+
+  async updateImage(id: number, profileImage: string) {
+    return this.usersRepository.updateImage(id, profileImage);
   }
 
   async softDelete(id: number) {
@@ -35,25 +42,5 @@ export class UsersService {
     }
     const restoredUser = await this.usersRepository.restoreUser(id);
     return restoredUser;
-  }
-
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }

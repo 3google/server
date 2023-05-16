@@ -14,7 +14,7 @@ import { Response } from 'express';
 import { Cookie } from 'src/utils/cookie';
 import { errorHandler } from 'src/middleware/errorHandler';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   private kakaoRedirectLoginUri: string;
   private kakaoLoginUrl: string;
