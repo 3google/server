@@ -10,7 +10,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response/response.interceptor';
 import { KakaoModule } from './users/kakao.module';
-import { BookmarkCategoriesModule } from './bookmark-categories/bookmarkCategories.module';
 // import { ADMIN_GUARD, AUTH_GUARD } from '@nestjs/core/constants';
 import { AdminModule } from './admin/admin.module';
 import { FileModule } from './file/file.module';
