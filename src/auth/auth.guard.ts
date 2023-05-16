@@ -10,6 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
 import { ACCESS_TOKEN_COOKIE_KEY } from 'src/utils/constants';
 import { Token } from 'src/utils/token';
+import { errorHandler } from 'src/middleware/errorHandler';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -40,10 +41,7 @@ export class AuthGuard implements CanActivate {
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(
-    private readonly tokenService: Token,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly tokenService: Token) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest() as Request;
@@ -63,8 +61,10 @@ export class AdminGuard implements CanActivate {
       this.tokenService.verifyAccessToken(accessToken);
 
     // admin 아니면 안돼요
-    if (!isAdmin) return false;
-
+    if (!isAdmin) {
+      errorHandler('관리자외 접근 불가', '관리자 권한을 가지고 있지 않습니다.');
+      return false;
+    }
     req.userId = userId;
 
     return true;

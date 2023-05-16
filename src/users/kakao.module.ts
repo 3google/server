@@ -21,6 +21,10 @@ import Joi from 'joi';
         JWT_SECRET: Joi.string().required(),
         COOKIE_SECRET: Joi.string().required(),
         NAVER_STATE: Joi.string().required(),
+        AWS_BUCKET_REGION: Joi.string().required(),
+        AWS_BUCKET_NAME: Joi.string().required(),
+        AWS_ACCESS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
       }),
       load: [
         // 프로그램 실행 이후, .env에 있는 값들을 process.env에 넣어줌
@@ -42,6 +46,10 @@ import Joi from 'joi';
             naverLoginUrl: `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.NAVER_CLIENT_ID}&redirect_uri=${process.env.NAVER_REDIRECT_LOGIN_URI}&response_type=code&state=${process.env.NAVER_STATE}`,
             jwtSecret: process.env.JWT_SECRET,
             cookieSecret: process.env.COOKIE_SECRET,
+            awsBucketRegion: process.env.AWS_BUCKET_REGION,
+            awsBucketName: process.env.AWS_BUCKET_NAME,
+            awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            AwsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
           };
         },
       ],

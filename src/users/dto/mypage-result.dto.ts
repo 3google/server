@@ -1,11 +1,12 @@
+import { Platform } from '@prisma/client';
+
 export interface MypageResultDto {
-  statusCode: number;
-  message: string;
   data: {
     nickname: string;
     profileImg: string;
-    social: string;
+    platform: Platform;
     myPostsCnt: number;
     myCommentsCnt: number;
   };
+  message: string;
 }

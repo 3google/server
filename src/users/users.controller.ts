@@ -31,8 +31,6 @@ export class UsersController {
   @Get('/mypage')
   @UseGuards(AuthGuard)
   async findById(@Req() req: Request) {
-    console.log(req.userId);
-
     const user = await this.usersService.findById(req.userId);
     const myPostsCnt = await this.postsService.findPostsByUser(req.userId);
     return {
@@ -40,18 +38,18 @@ export class UsersController {
       data: {
         nickname: user.nickname,
         profileImg: user.profileImage,
-        social: user.platform,
+        platform: user.platform,
         myPostsCnt: myPostsCnt.length,
         // myCommentsCnt:
       },
       message: '내 정보',
-      statusCode: 200,
     } as MypageResultDto;
   }
   @Delete('/account')
   @UseGuards(AuthGuard)
   async softDelete(@Res({ passthrough: true }) res, @Req() req: Request) {
     this.cookie.clearAuthCookies(res);
+
     await this.usersService.softDelete(req.userId);
     return { message: '탈퇴처리 되었습니다.' };
   }
