@@ -56,6 +56,30 @@ export class UsersRepository {
     });
   }
 
+  async updateNickname(id: number, nickname:string) {
+    const updatedUser = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        nickname
+      },
+    });
+    return updatedUser;
+  }
+
+  async updateImage(id: number, profileImage: string) {
+    const updatedUser = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        profileImage,
+      },
+    });
+    return updatedUser;
+  }
+
   async restoreUser(id: number) {
     return await this.prismaService.user.update({
       where: {

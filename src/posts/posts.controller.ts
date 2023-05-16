@@ -14,7 +14,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as PostModel } from '@prisma/client';
 import { FindPostsQueryDto } from './dto/find-posts-query.dto';
 
-@Controller('/posts')
+@Controller('api/posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 

@@ -8,9 +8,20 @@ import { Cookie } from 'src/utils/cookie';
 import { PostsService } from 'src/posts/posts.service';
 import { PostsRepository } from 'src/posts/posts.repository';
 import { CommentsRepository } from 'src/comments/comments.repository';
+// import { FileService } from 'src/file/file.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { multerOptionsFactory } from 'src/utils/multer.options';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    PrismaModule,
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: multerOptionsFactory,
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,
@@ -20,6 +31,7 @@ import { CommentsRepository } from 'src/comments/comments.repository';
     PostsService,
     PostsRepository,
     CommentsRepository,
+    // FileService,
   ],
   exports: [UsersRepository, UsersService],
 })
