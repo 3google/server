@@ -7,6 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   controllers: [BookmarkCategoriesController],
   providers: [BookmarkCategoriesService, BookmarkCategoryRepository],
-  imports: [PrismaModule],
+  imports:[PrismaModule]
 })
 export class BookmarkCategoriesModule {}
