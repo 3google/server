@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { BookmarkCategoriesModule } from './bookmark-categories/bookmarkCategories.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';

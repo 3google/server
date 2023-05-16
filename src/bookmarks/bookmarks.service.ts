@@ -6,15 +6,17 @@ import { Bookmark } from '@prisma/client';
 
 @Injectable()
 export class BookmarksService {
-  constructor(private bookmarksRepository: BookmarksRepository) {}
+  constructor(private bookmarksRepository: BookmarksRepository){}
 
-  async create(createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
+  async create(createBookmarkDto: CreateBookmarkDto):Promise<Bookmark> {
     return await this.bookmarksRepository.create(createBookmarkDto);
   }
-  async find(findBookmarkDto: FindBookmarkDto) {
-    return await this.bookmarksRepository.find(findBookmarkDto);
+
+  async findByCategoryId(categoryId: number) {
+    return await this.bookmarksRepository.findByCategoryId(categoryId);
   }
-  async deleteBookmark(Id: number) {
+
+  async deleteBookmark(Id:number){
     return await this.bookmarksRepository.deleteBookmark(Id);
   }
 }
